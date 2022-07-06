@@ -1,13 +1,13 @@
-#include <MAX17263.h>
+#include <Gonk.h>
 
-MAX17263::MAX17263(uint8_t talonPort_, uint8_t sensorPort_, uint8_t version)
+Gonk::Gonk(uint8_t talonPort_, uint8_t sensorPort_, uint8_t version)
 {
 	talonPort = talonPort_ - 1;
 	// sensorPort = sensorPort_ - 1;
 	sensorInterface = BusType::NONE; 
 }
 
-String MAX17263::begin(time_t time, bool &criticalFault, bool &fault)
+String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
 {
     //Only use isEnabled() if using particle
 	#if defined(ARDUINO) && ARDUINO >= 100 
@@ -28,27 +28,27 @@ String MAX17263::begin(time_t time, bool &criticalFault, bool &fault)
     Wire.endTransmission();
 }
 
-String MAX17263::getData(time_t time)
+String Gonk::getData(time_t time)
 {
     return "{}"; //DEBUG!
 }
 
-String MAX17263::getErrors()
+String Gonk::getErrors()
 {
     return "{}"; //DEBUG!
 }
 
-String MAX17263::getMetadata()
+String Gonk::getMetadata()
 {
     return "{}"; //DEBUG!
 }
 
-String MAX17263::selfDiagnostic(uint8_t diagnosticLevel, time_t time)
+String Gonk::selfDiagnostic(uint8_t diagnosticLevel, time_t time)
 {
     return "{}";
 }
 
-uint16_t MAX17263::getBatteryData(uint8_t Reg)
+uint16_t Gonk::getBatteryData(uint8_t Reg)
 {
 	const uint8_t ADR = 0x36;
 
@@ -65,14 +65,14 @@ uint16_t MAX17263::getBatteryData(uint8_t Reg)
 	return Data;
 }
 
-int MAX17263::throwError(uint32_t error)
+int Gonk::throwError(uint32_t error)
 {
 	errors[(numErrors++) % MAX_NUM_ERRORS] = error; //Write error to the specified location in the error array
 	if(numErrors > MAX_NUM_ERRORS) errorOverwrite = true; //Set flag if looping over previous errors 
 	return numErrors;
 }
 
-String MAX17263::getErrors()
+String Gonk::getErrors()
 {
 	String output = "{\"GONK\":{"; // OPEN JSON BLOB
 	output = output + "\"CODES\":["; //Open codes pair

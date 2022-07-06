@@ -1,9 +1,9 @@
-#ifndef MAX17263_h
-#define MAX17263_h
+#ifndef Gonk_h
+#define Gonk_h
 
 #include <Sensor.h>
 
-class MAX17263: public Sensor
+class Gonk: public Sensor
 {
 	constexpr static int DEAFULT_PORT = 5; ///<Use port 5 (ext) by default
 	constexpr static int DEFAULT_SENSOR_PORT = 0; ///<Use port 0 by default
@@ -19,7 +19,7 @@ class MAX17263: public Sensor
 	// const uint32_t SHT3X_I2C_ERROR = 0x10020000; //FIX! Error subtype = I2C error code
 
 	public:
-		MAX17263(uint8_t talonPort_ = DEAFULT_PORT, uint8_t sensorPort_ = DEFAULT_SENSOR_PORT, uint8_t version = DEFAULT_VERSION);
+		Gonk(uint8_t talonPort_ = DEAFULT_PORT, uint8_t sensorPort_ = DEFAULT_SENSOR_PORT, uint8_t version = DEFAULT_VERSION);
 		String begin(time_t time, bool &criticalFault, bool &fault);
 		String getData(time_t time);
 		String getErrors();
