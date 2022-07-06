@@ -1,2 +1,2 @@
-# Driver_-_MAX17263
+# Driver_-_Gonk
 Driver for Gonk sensing chip
