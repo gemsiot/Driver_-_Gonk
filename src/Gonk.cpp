@@ -26,17 +26,26 @@ String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
     Wire.write(0b10100100); //Set for push button control, 4 bars
     Wire.write(0b01110010); //Default, but breathing LEDs
     Wire.endTransmission();
+	return "{}"; //DEBUG!
 }
 
 String Gonk::getData(time_t time)
 {
-    return "{}"; //DEBUG!
+	String output = "{\"GONK\":{"; //OPEN JSON BLOB
+	output = output + "\"CellV\":" + String(getBatteryData(0x09)*0.078125, 6) + ","; //Convert to volts
+	output = output + "\"CellVAvg\":" + String(getBatteryData(0x19)*0.078125, 6) + ","; //Convert to volts
+	output = output + "\"CapLeft\":" + String(getBatteryData(0x05)*0.5, 1) + ","; //Convert to mAh
+	output = output + "\"CapTotal\":" + String(getBatteryData(0x10)*0.5, 1) + ","; //Convert to mAh
+	output = output + "\"TTF\":" + String(getBatteryData(0x20)*5.625, 3) + ","; //Convert to seconds
+	output = output + "\"SoC\":" + String(getBatteryData(0x06)/256.0, 2); //Convert to %
+	output = output + "}}";
+	return output; 
 }
 
-String Gonk::getErrors()
-{
-    return "{}"; //DEBUG!
-}
+// String Gonk::getErrors()
+// {
+//     return "{}"; //DEBUG!
+// }
 
 String Gonk::getMetadata()
 {
@@ -95,5 +104,14 @@ String Gonk::getErrors()
 	return output;
 
 	// return -1; //Return fault if unknown cause 
+}
+
+bool Gonk::isPresent()
+{
+	Wire.beginTransmission(0x36);
+	// Wire.write(0x09); //Write to voltage register
+	int error = Wire.endTransmission();
+	if(error == 0) return true;
+	else return false; 
 }
 

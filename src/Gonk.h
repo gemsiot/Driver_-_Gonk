@@ -32,7 +32,7 @@ class Gonk: public Sensor
 		uint8_t totalErrors() {
 			return numErrors;
 		}
-		void setTalonPort(uint8_t port);
+		// void setTalonPort(uint8_t port);
 
 		// const uint8_t sensorInterface = BusType::I2C; 
 	private:
