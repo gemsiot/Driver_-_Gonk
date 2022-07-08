@@ -26,29 +26,30 @@ class Gonk: public Sensor
         String getMetadata();
         String selfDiagnostic(uint8_t diagnosticLevel, time_t time);
 		bool isPresent();
-		uint8_t getTalonPort() {
-			return talonPort + 1;
-		}
-		uint8_t totalErrors() {
-			return numErrors;
-		}
+		// uint8_t getTalonPort() {
+		// 	return talonPort + 1;
+		// }
+		// uint8_t totalErrors() {
+		// 	return numErrors;
+		// }
 		// void setTalonPort(uint8_t port);
 
 		// const uint8_t sensorInterface = BusType::I2C; 
 	private:
+		const int ADR = 0x36; 
         uint16_t getBatteryData(uint8_t Reg);
-		int throwError(uint32_t error);
+		// int throwError(uint32_t error);
 
 		bool initDone = false; //Used to keep track if the initaliztion has run - used by hasReset() 
 		
 
-		uint32_t errors[MAX_NUM_ERRORS] = {0};
-		uint8_t numErrors = 0; //Used to track the index of errors array
-		bool errorOverwrite = false; //Used to track if errors have been overwritten in time since last report
+		// uint32_t errors[MAX_NUM_ERRORS] = {0};
+		// uint8_t numErrors = 0; //Used to track the index of errors array
+		// bool errorOverwrite = false; //Used to track if errors have been overwritten in time since last report
 		// bool timeBaseGood = false; //Used to keep track of the valitity of the current timebase
-		uint8_t talonPort = 0; //Used to keep track of which port the Talon is connected to on Kestrel
+		// uint8_t talonPort = 0; //Used to keep track of which port the Talon is connected to on Kestrel
 		// uint8_t sensorPort = 0; //Used to keep track of which port the sensor is connected to on associated Talon
-		uint32_t talonPortErrorCode = 0; //Used to easily OR with error codes to add the Talon port
+		// uint32_t talonPortErrorCode = 0; //Used to easily OR with error codes to add the Talon port
 		// uint32_t sensorPortErrorCode = 0; //Used to easily OR with error codes to add the Sensor port
 		uint8_t version = 0; //FIX! This should be read from EEPROM in future 
 };

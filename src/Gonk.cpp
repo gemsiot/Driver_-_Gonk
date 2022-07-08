@@ -16,11 +16,11 @@ String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
 		if(!Wire.isEnabled()) Wire.begin(); //Only initialize I2C if not done already //INCLUDE FOR USE WITH PARTICLE 
 	#endif
 
-    Wire.beginTransmission(0x36);
+    Wire.beginTransmission(ADR);
 	Wire.write(0x09); //Write to voltage register
 	int Error = Wire.endTransmission();
 
-    Wire.beginTransmission(0x36);
+    Wire.beginTransmission(ADR);
     Wire.write(0x40); //Write to led register //DEBUG!
     // Wire.write(0b11100100); //Set for always on, 4 bars
     Wire.write(0b10100100); //Set for push button control, 4 bars
@@ -31,14 +31,18 @@ String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
 
 String Gonk::getData(time_t time)
 {
-	String output = "{\"GONK\":{"; //OPEN JSON BLOB
-	output = output + "\"CellV\":" + String(getBatteryData(0x09)*0.078125, 6) + ","; //Convert to volts
-	output = output + "\"CellVAvg\":" + String(getBatteryData(0x19)*0.078125, 6) + ","; //Convert to volts
-	output = output + "\"CapLeft\":" + String(getBatteryData(0x05)*0.5, 1) + ","; //Convert to mAh
-	output = output + "\"CapTotal\":" + String(getBatteryData(0x10)*0.5, 1) + ","; //Convert to mAh
-	output = output + "\"TTF\":" + String(getBatteryData(0x20)*5.625, 3) + ","; //Convert to seconds
-	output = output + "\"SoC\":" + String(getBatteryData(0x06)/256.0, 2); //Convert to %
-	output = output + "}}";
+	String output = "{\"GONK\":"; //OPEN JSON BLOB
+	if(isPresent()) { //If Talon has been detected, go through normal data appending 
+		output = output + "{"; //Open sub-blob
+		output = output + "\"CellV\":" + String(getBatteryData(0x09)*0.078125, 6) + ","; //Convert to volts
+		output = output + "\"CellVAvg\":" + String(getBatteryData(0x19)*0.078125, 6) + ","; //Convert to volts
+		output = output + "\"CapLeft\":" + String(getBatteryData(0x05)*0.5, 1) + ","; //Convert to mAh
+		output = output + "\"CapTotal\":" + String(getBatteryData(0x10)*0.5, 1) + ","; //Convert to mAh
+		output = output + "\"TTF\":" + String(getBatteryData(0x20)*5.625, 3) + ","; //Convert to seconds
+		output = output + "\"SoC\":" + String(getBatteryData(0x06)/256.0, 2); //Convert to %
+		output = output + "}}";
+	}
+	else output = output + "null}"; //Terminate output with null
 	return output; 
 }
 
@@ -59,7 +63,7 @@ String Gonk::selfDiagnostic(uint8_t diagnosticLevel, time_t time)
 
 uint16_t Gonk::getBatteryData(uint8_t Reg)
 {
-	const uint8_t ADR = 0x36;
+	// const uint8_t ADR = 0x36;
 
 	Wire.beginTransmission(ADR);
 	Wire.write(Reg); //Write to voltage register
@@ -74,12 +78,12 @@ uint16_t Gonk::getBatteryData(uint8_t Reg)
 	return Data;
 }
 
-int Gonk::throwError(uint32_t error)
-{
-	errors[(numErrors++) % MAX_NUM_ERRORS] = error; //Write error to the specified location in the error array
-	if(numErrors > MAX_NUM_ERRORS) errorOverwrite = true; //Set flag if looping over previous errors 
-	return numErrors;
-}
+// int Gonk::throwError(uint32_t error)
+// {
+// 	errors[(numErrors++) % MAX_NUM_ERRORS] = error; //Write error to the specified location in the error array
+// 	if(numErrors > MAX_NUM_ERRORS) errorOverwrite = true; //Set flag if looping over previous errors 
+// 	return numErrors;
+// }
 
 String Gonk::getErrors()
 {
@@ -108,7 +112,7 @@ String Gonk::getErrors()
 
 bool Gonk::isPresent()
 {
-	Wire.beginTransmission(0x36);
+	Wire.beginTransmission(ADR);
 	// Wire.write(0x09); //Write to voltage register
 	int error = Wire.endTransmission();
 	if(error == 0) return true;
