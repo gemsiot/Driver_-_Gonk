@@ -16,16 +16,16 @@ String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
 		if(!Wire.isEnabled()) Wire.begin(); //Only initialize I2C if not done already //INCLUDE FOR USE WITH PARTICLE 
 	#endif
 
-    Wire.beginTransmission(ADR);
-	Wire.write(0x09); //Write to voltage register
-	int Error = Wire.endTransmission();
+    // Wire.beginTransmission(ADR);
+	// Wire.write(0x09); //Write to voltage register
+	// int Error = Wire.endTransmission();
 
-    Wire.beginTransmission(ADR);
-    Wire.write(0x40); //Write to led register //DEBUG!
+    // Wire.beginTransmission(ADR);
+    // Wire.write(0x40); //Write to led register //DEBUG!
     // Wire.write(0b11100100); //Set for always on, 4 bars
-    Wire.write(0b10100100); //Set for push button control, 4 bars
-    Wire.write(0b01110010); //Default, but breathing LEDs
-    Wire.endTransmission();
+    // // Wire.write(0b10100100); //Set for push button control, 4 bars
+    // Wire.write(0b01110010); //Default, but breathing LEDs
+    // Wire.endTransmission();
 	return "{}"; //DEBUG!
 }
 
@@ -108,6 +108,54 @@ String Gonk::getErrors()
 	return output;
 
 	// return -1; //Return fault if unknown cause 
+}
+
+bool Gonk::setIndicatorState(uint8_t mode)
+{
+	Wire.beginTransmission(ADR);
+	Wire.write(0x09); //Write to voltage register
+	int error = Wire.endTransmission();
+	if(mode == GonkIndicatorMode::SOLID) { //If true, turn on manually
+		Wire.beginTransmission(ADR);
+		Wire.write(0x40); //Write to led register //DEBUG!
+		Wire.write(0b11100100); //Set for always on, 4 bars
+		// Wire.write(0b10100100); //Set for push button control, 4 bars
+		// Wire.write(0b01110010); //Default, but breathing LEDs
+		Wire.write(0b01110000); //Default, solid LEDs
+		Wire.endTransmission();
+	}
+	else if(mode == GonkIndicatorMode::FULLY_OFF) { //Otherwise relinquish to push button control
+		Wire.beginTransmission(ADR);
+		Wire.write(0x40); //Write to led register //DEBUG!
+		// Wire.write(0b11100100); //Set for always on, 4 bars
+		Wire.write(0b00100100); //Disable LEDs, 4 bars
+		Wire.write(0b01110000); //Default, solid LEDs
+		Wire.endTransmission();
+	}
+	else if(mode == GonkIndicatorMode::PUSH_BUTTON) { //Otherwise relinquish to push button control
+		Wire.beginTransmission(ADR);
+		Wire.write(0x40); //Write to led register //DEBUG!
+		// Wire.write(0b11100100); //Set for always on, 4 bars
+		Wire.write(0b10100100); //Set for push button control, 4 bars
+		// Wire.write(0b00100100); //Disable LEDs, 4 bars
+		Wire.write(0b01110001); //Default, fill animation
+		Wire.endTransmission();
+	}
+	else if(mode == GonkIndicatorMode::BLINKING) { //Otherwise relinquish to push button control
+		Wire.beginTransmission(ADR);
+		Wire.write(0x40); //Write to led register //DEBUG!
+		Wire.write(0b11100100); //Set for always on, 4 bars
+		// Wire.write(0b10100100); //Set for push button control, 4 bars
+		// Wire.write(0b00100100); //Disable LEDs, 4 bars
+		// Wire.write(0b01110000); //Default, solid LEDs
+		Wire.write(0b01111110); //Default, but breathing LEDs
+		Wire.endTransmission();
+	}
+	if(error == 0) return true;
+	else {
+		//THROW ERROR
+		return false;
+	}
 }
 
 bool Gonk::isPresent()

@@ -3,6 +3,14 @@
 
 #include <Sensor.h>
 
+namespace  GonkIndicatorMode
+{
+	constexpr uint8_t SOLID = 1;
+	constexpr uint8_t FULLY_OFF = 2;
+	constexpr uint8_t PUSH_BUTTON = 0;
+	constexpr uint8_t BLINKING = 4;
+}
+
 class Gonk: public Sensor
 {
 	constexpr static int DEAFULT_PORT = 5; ///<Use port 5 (ext) by default
@@ -17,6 +25,7 @@ class Gonk: public Sensor
 	// const uint32_t DPS368_INIT_ERROR = 0x10010000; //FIX! Error subtype = I2C error code
 	// const uint32_t SHT3X_INIT_ERROR = 0x10030000; //FIX! 
 	// const uint32_t SHT3X_I2C_ERROR = 0x10020000; //FIX! Error subtype = I2C error code
+	
 
 	public:
 		Gonk(uint8_t talonPort_ = DEAFULT_PORT, uint8_t sensorPort_ = DEFAULT_SENSOR_PORT, uint8_t version = DEFAULT_VERSION);
@@ -25,6 +34,7 @@ class Gonk: public Sensor
 		String getErrors();
         String getMetadata();
         String selfDiagnostic(uint8_t diagnosticLevel, time_t time);
+		bool setIndicatorState(uint8_t mode);
 		bool isPresent();
 		// uint8_t getTalonPort() {
 		// 	return talonPort + 1;
@@ -35,6 +45,7 @@ class Gonk: public Sensor
 		// void setTalonPort(uint8_t port);
 
 		// const uint8_t sensorInterface = BusType::I2C; 
+		
 	private:
 		const int ADR = 0x36; 
         uint16_t getBatteryData(uint8_t Reg);
