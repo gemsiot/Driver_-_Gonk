@@ -4,7 +4,7 @@ Gonk::Gonk(uint8_t talonPort_, uint8_t sensorPort_, uint8_t version)
 {
 	talonPort = talonPort_ - 1;
 	// sensorPort = sensorPort_ - 1;
-	sensorInterface = BusType::NONE; 
+	sensorInterface = BusType::CORE; 
 }
 
 String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
