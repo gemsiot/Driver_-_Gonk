@@ -4,7 +4,7 @@ Gonk::Gonk(uint8_t talonPort_, uint8_t sensorPort_, uint8_t version)
 {
 	talonPort = talonPort_ - 1;
 	// sensorPort = sensorPort_ - 1;
-	sensorInterface = BusType::CORE; 
+	sensorInterface = BusType::NONE; 
 }
 
 String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
@@ -31,19 +31,20 @@ String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
 
 String Gonk::getData(time_t time)
 {
-	String output = "{\"GONK\":"; //OPEN JSON BLOB
-	if(isPresent()) { //If Talon has been detected, go through normal data appending 
-		output = output + "{"; //Open sub-blob
-		output = output + "\"CellV\":" + String(getBatteryData(0x09)*0.078125, 6) + ","; //Convert to volts
-		output = output + "\"CellVAvg\":" + String(getBatteryData(0x19)*0.078125, 6) + ","; //Convert to volts
-		output = output + "\"CapLeft\":" + String(getBatteryData(0x05)*0.5, 1) + ","; //Convert to mAh
-		output = output + "\"CapTotal\":" + String(getBatteryData(0x10)*0.5, 1) + ","; //Convert to mAh
-		output = output + "\"TTF\":" + String(getBatteryData(0x20)*5.625, 3) + ","; //Convert to seconds
-		output = output + "\"SoC\":" + String(getBatteryData(0x06)/256.0, 2); //Convert to %
-		output = output + "}}";
-	}
-	else output = output + "null}"; //Terminate output with null
-	return output; 
+	// String output = "{\"GONK\":"; //OPEN JSON BLOB
+	// if(isPresent()) { //If Talon has been detected, go through normal data appending 
+	// 	output = output + "{"; //Open sub-blob
+	// 	output = output + "\"CellV\":" + String(getBatteryData(0x09)*0.078125, 6) + ","; //Convert to volts
+	// 	output = output + "\"CellVAvg\":" + String(getBatteryData(0x19)*0.078125, 6) + ","; //Convert to volts
+	// 	output = output + "\"CapLeft\":" + String(getBatteryData(0x05)*0.5, 1) + ","; //Convert to mAh
+	// 	output = output + "\"CapTotal\":" + String(getBatteryData(0x10)*0.5, 1) + ","; //Convert to mAh
+	// 	output = output + "\"TTF\":" + String(getBatteryData(0x20)*5.625, 3) + ","; //Convert to seconds
+	// 	output = output + "\"SoC\":" + String(getBatteryData(0x06)/256.0, 2); //Convert to %
+	// 	output = output + "}}";
+	// }
+	// else output = output + "null}"; //Terminate output with null
+	// return output;
+	return "{\"Gonk\":null}"; //Return null since no actual data
 }
 
 // String Gonk::getErrors()
@@ -58,7 +59,79 @@ String Gonk::getMetadata()
 
 String Gonk::selfDiagnostic(uint8_t diagnosticLevel, time_t time)
 {
-    return "{}";
+	
+    // String output = "{\"Apogee Pyro\":{";
+	String output = "{\"GONK\":{"; //OPEN JSON BLOB
+	if(isPresent()) { //If Talon has been detected, go through normal diagnostic return appending 
+		if(diagnosticLevel == 0) {
+			//TBD
+			output = output + "\"lvl-0\":{},";
+			// return output + "\"lvl-0\":{},\"Pos\":[" + String(port) + "]}}";
+		}
+
+		if(diagnosticLevel <= 1) {
+			//TBD
+			output = output + "\"lvl-1\":{},";
+		}
+
+		if(diagnosticLevel <= 2) {
+			//TBD
+			output = output + "\"lvl-2\":{},";
+		}
+
+		if(diagnosticLevel <= 3) {
+			//TBD
+			// Serial.println(millis()); //DEBUG!
+			output = output + "\"lvl-3\":{"; //OPEN JSON BLOB
+
+			output = output + "},"; //CLOSE JSON BLOB
+			// return output + ",\"Pos\":[" + String(port) + "]}}";
+			// return output;
+
+		}
+
+		if(diagnosticLevel <= 4) {
+			// String output = selfDiagnostic(5); //Call the lower level of self diagnostic 
+			// output = output.substring(0,output.length() - 1); //Trim off closing brace
+			output = output + "\"lvl-4\":{"; //OPEN JSON BLOB
+			// uint8_t adr = (talon.sendCommand("?!")).toInt(); //Get address of local device 
+			// String stat = talon.command("M2", adr);
+			// Serial.print("STAT: "); //DEBUG!
+			// Serial.println(stat);
+
+			// delay(1000); //Wait 1 second to get data back //FIX! Wait for newline??
+			// String data = talon.command("D0", adr);
+			// Serial.print("DATA: "); //DEBUG!
+			// Serial.println(data);
+			// data.remove(0,2); //Trim leading address and +
+			// float angle = (data.trim()).toFloat();
+			// output = output + "\"Angle\":" + String(angle);
+			output = output + "},"; //CLOSE JSON BLOB
+			// return output + ",\"Pos\":[" + String(port) + "]}}";
+			// return output;
+
+		}
+
+		if(diagnosticLevel <= 5) {
+			output = output + "\"lvl-5\":{"; //OPEN JSON BLOB
+			// output = output + "{"; //Open sub-blob
+			output = output + "\"CellV\":" + String(getBatteryData(0x09)*0.078125, 6) + ","; //Convert to volts
+			output = output + "\"CellVAvg\":" + String(getBatteryData(0x19)*0.078125, 6) + ","; //Convert to volts
+			output = output + "\"CapLeft\":" + String(getBatteryData(0x05)*0.5, 1) + ","; //Convert to mAh
+			output = output + "\"CapTotal\":" + String(getBatteryData(0x10)*0.5, 1) + ","; //Convert to mAh
+			output = output + "\"TTF\":" + String(getBatteryData(0x20)*5.625, 3) + ","; //Convert to seconds
+			output = output + "\"SoC\":" + String(getBatteryData(0x06)/256.0, 2); //Convert to %
+			// output = output + "}}";
+			output = output + "}"; //Close pair
+			
+		}
+		return output + ",\"Pos\":[" + getTalonPortString() + "," + getSensorPortString() + "]}}"; //Write position in logical form - Return compleated closed output
+
+		
+			
+	}
+	else output = output + "null}"; //Terminate output with null
+	return output; 
 }
 
 uint16_t Gonk::getBatteryData(uint8_t Reg)
