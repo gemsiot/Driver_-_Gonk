@@ -120,7 +120,8 @@ String Gonk::selfDiagnostic(uint8_t diagnosticLevel, time_t time)
 			output = output + "\"CapLeft\":" + String(getBatteryData(0x05)*0.5, 1) + ","; //Convert to mAh
 			output = output + "\"CapTotal\":" + String(getBatteryData(0x10)*0.5, 1) + ","; //Convert to mAh
 			output = output + "\"TTF\":" + String(getBatteryData(0x20)*5.625, 3) + ","; //Convert to seconds
-			output = output + "\"SoC\":" + String(getBatteryData(0x06)/256.0, 2); //Convert to %
+			output = output + "\"SoC\":" + String(getBatteryData(0x06)/256.0, 2) + ","; //Convert to %
+			output = output + "\"Temperature\":" + String(getBatteryData(0x34)/256.0, 2); //Convert to C°
 			// output = output + "}}";
 			output = output + "}"; //Close pair
 			
@@ -130,7 +131,7 @@ String Gonk::selfDiagnostic(uint8_t diagnosticLevel, time_t time)
 		
 			
 	}
-	else output = output + "null}"; //Terminate output with null
+	else output = output + "null}}"; //Terminate output with null
 	return output; 
 }
 
