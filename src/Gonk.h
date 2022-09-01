@@ -17,7 +17,7 @@ class Gonk: public Sensor
 	constexpr static int DEFAULT_SENSOR_PORT = 0; ///<Use port 0 by default
   	constexpr static int DEFAULT_VERSION = 0x12; ///<Use hardware version v1.2 by default
   	constexpr static int MAX_NUM_ERRORS = 10; ///<Maximum number of errors to log before overwriting previous errors in buffer
-	const String FIRMWARE_VERSION = "1.0.0"; //FIX! Read from system??
+	const String FIRMWARE_VERSION = "1.0.1"; //FIX! Read from system??
 	
 	// const uint32_t SENSOR_PORT_RANGE_ERROR = 0x90010100; //FIX! 
 	// const uint32_t TALON_PORT_RANGE_ERROR = 0x90010200; //FIX! 
