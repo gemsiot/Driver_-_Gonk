@@ -26,7 +26,7 @@ String Gonk::begin(time_t time, bool &criticalFault, bool &fault)
     // // Wire.write(0b10100100); //Set for push button control, 4 bars
     // Wire.write(0b01110010); //Default, but breathing LEDs
     // Wire.endTransmission();
-	return "{}"; //DEBUG!
+	return ""; //DEBUG!
 }
 
 // String Gonk::getData(time_t time)
