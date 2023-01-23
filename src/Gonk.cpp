@@ -236,7 +236,7 @@ String Gonk::getErrors()
 bool Gonk::setIndicatorState(uint8_t mode)
 {
 	Wire.beginTransmission(ADR);
-	Wire.write(0x09); //Write to voltage register
+	// Wire.write(0x09); //Write to voltage register
 	int error = Wire.endTransmission();
 	if(mode == GonkIndicatorMode::SOLID) { //If true, turn on manually
 		Wire.beginTransmission(ADR);
@@ -259,7 +259,7 @@ bool Gonk::setIndicatorState(uint8_t mode)
 		Wire.beginTransmission(ADR);
 		Wire.write(0x40); //Write to led register //DEBUG!
 		// Wire.write(0b11100100); //Set for always on, 4 bars
-		Wire.write(0b10100100); //Set for push button control, 4 bars
+		Wire.write(0b10000100); //Set for push button control, 4 bars
 		// Wire.write(0b00100100); //Disable LEDs, 4 bars
 		Wire.write(0b01110001); //Default, fill animation
 		Wire.endTransmission();
@@ -276,6 +276,8 @@ bool Gonk::setIndicatorState(uint8_t mode)
 	}
 	if(error == 0) return true;
 	else {
+		Serial.print("Error on Bat Com - "); //DEBUG!
+		Serial.println(error); //DEBUG!
 		//THROW ERROR
 		return false;
 	}
