@@ -77,6 +77,7 @@ String Gonk::selfDiagnostic(uint8_t diagnosticLevel, time_t time)
 		if(diagnosticLevel <= 2) {
 			//TBD
 			// output = output + "\"lvl-2\":{},";
+			output = output + "\"Cycles\":" + String(float(getBatteryData(0x17))/100.0, 2) + ","; //Report number of charge cycles
 		}
 
 		if(diagnosticLevel <= 3) {
